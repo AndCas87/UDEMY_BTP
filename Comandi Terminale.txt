@@ -1,0 +1,8 @@
+cds build
+
+cds bind -2 e_Learning-db:SharedDevKey
+
+cds watch --profile hybrid
+
+APPROUTER AND XSUAA
+
