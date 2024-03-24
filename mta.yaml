@@ -1,4 +1,3 @@
----
 _schema-version: '3.1'
 ID: e_Learning
 version: 1.0.0
@@ -13,7 +12,7 @@ build-parameters:
 modules:
   - name: e_Learning-srv
     type: nodejs
-    path: gen/srv
+    path: srv
     parameters:
       buildpack: nodejs_buildpack
     build-parameters:
@@ -22,4 +21,20 @@ modules:
       - name: srv-api # required by consumers of CAP services (e.g. approuter)
         properties:
           srv-url: ${default-url}
-    requires: []
+    requires:
+      - name: e_Learning-db
+
+  - name: e_Learning-db-deployer
+    type: hdb
+    path: db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: e_Learning-db
+
+resources:
+  - name: e_Learning-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
