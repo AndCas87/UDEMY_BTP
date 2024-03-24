@@ -24,36 +24,6 @@ modules:
       - name: e_Learning-db
     parameters:
       buildpack: nodejs_buildpack
-  - name: e_Learning-destination-content
-    type: com.sap.application.content
-    requires:
-      - name: e_Learning-destination-service
-        parameters:
-          content-target: true
-      - name: e_Learning_html_repo_host
-        parameters:
-          service-key:
-            name: e_Learning_html_repo_host-key
-      - name: uaa_e_Learning
-        parameters:
-          service-key:
-            name: uaa_e_Learning-key
-    parameters:
-      content:
-        instance:
-          destinations:
-            - Name: ManagedAppRouter_e_Learning_html_repo_host
-              ServiceInstanceName: e_Learning-html5-app-host-service
-              ServiceKeyName: e_Learning_html_repo_host-key
-              sap.cloud.service: ManagedAppRouter
-            - Authentication: OAuth2UserTokenExchange
-              Name: ManagedAppRouter_uaa_e_Learning
-              ServiceInstanceName: e_Learning-xsuaa-service
-              ServiceKeyName: uaa_e_Learning-key
-              sap.cloud.service: ManagedAppRouter
-          existing_destinations_policy: ignore
-    build-parameters:
-      no-source: true
 
 resources:
   - name: e_Learning-db
