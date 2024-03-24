@@ -6,3 +6,5 @@ cds watch --profile hybrid
 
 APPROUTER AND XSUAA
 
+Generazione APPROUTER da wizard
+cds add xsuaa

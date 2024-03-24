@@ -1,36 +1,59 @@
-_schema-version: '3.1'
+_schema-version: "3.1"
 ID: e_Learning
+description: A simple CAP project.
 version: 1.0.0
-description: "A simple CAP project."
-parameters:
-  enable-parallel-deployments: true
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npx cds build --production
 modules:
   - name: e_Learning-srv
     type: nodejs
-    path: srv
+    path: gen/srv
+    requires:
+      - name: e_Learning-db
+      - name: uaa_e_Learning
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
     parameters:
       buildpack: nodejs_buildpack
     build-parameters:
-      builder: npm
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: e_Learning-db
-
+      builder: npm-ci
   - name: e_Learning-db-deployer
     type: hdb
     path: db
-    parameters:
-      buildpack: nodejs_buildpack
     requires:
       - name: e_Learning-db
+    parameters:
+      buildpack: nodejs_buildpack
+  - name: e_Learning-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: e_Learning-destination-service
+        parameters:
+          content-target: true
+      - name: e_Learning_html_repo_host
+        parameters:
+          service-key:
+            name: e_Learning_html_repo_host-key
+      - name: uaa_e_Learning
+        parameters:
+          service-key:
+            name: uaa_e_Learning-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: ManagedAppRouter_e_Learning_html_repo_host
+              ServiceInstanceName: e_Learning-html5-app-host-service
+              ServiceKeyName: e_Learning_html_repo_host-key
+              sap.cloud.service: ManagedAppRouter
+            - Authentication: OAuth2UserTokenExchange
+              Name: ManagedAppRouter_uaa_e_Learning
+              ServiceInstanceName: e_Learning-xsuaa-service
+              ServiceKeyName: uaa_e_Learning-key
+              sap.cloud.service: ManagedAppRouter
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
 
 resources:
   - name: e_Learning-db
@@ -38,3 +61,35 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: e_Learning-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+      service: destination
+      service-name: e_Learning-destination-service
+      service-plan: lite
+  - name: e_Learning_html_repo_host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: e_Learning-html5-app-host-service
+      service-plan: app-host
+  - name: uaa_e_Learning
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: e_Learning-xsuaa-service
+      service-plan: application
+      config:
+        xsappname: e_Learning-${org}-${space}
+        tenant-mode: dedicated
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx cds build --production
