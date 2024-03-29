@@ -1,3 +1,5 @@
+cf deploy mta_archives/school_0.0.1.mtar​
+
 cds build
 
 cds bind -2 e_Learning-db:SharedDevKey
@@ -8,3 +10,11 @@ APPROUTER AND XSUAA
 
 Generazione APPROUTER da wizard
 cds add xsuaa
+
+cds compile srv --to xsuaa > xs-security.json //se configurati prima gli scope nel cds genera automaticamente 
+                                                il file compilato. Se compare l'errore Unknown model processor: cds.compile.to.xsuaa
+                                                controllare nel file package.json oppure cancellare la cartella nodemodules e 
+                                                rifare la build
+
+
+
