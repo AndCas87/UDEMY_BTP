@@ -86,7 +86,17 @@ resources:
       xsappname: e_Learning-${org}-${space}
     path: ./xs-security.json
     service: xsuaa
-    service-name: e_Learning-xsuaa-service
+    service-name: uaa_e_Learning
+    service-plan: application
+- name: uaa_e_Learning_rw
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: e_Learning-${org}-${space}
+    path: ./xs-security-rw.json
+    service: xsuaa
+    service-name: uaa_e_Learning_rw
     service-plan: application
 parameters:
   deploy_mode: html5-repo

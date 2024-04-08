@@ -1,0 +1,5 @@
+{
+  "xsappname" : "elearning",
+  "tenant-mode" : "shared",
+  "authorities" : ["$ACCEPT_GRANTED_AUTHORITIES"]
+}
